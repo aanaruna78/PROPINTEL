@@ -9,10 +9,10 @@ export default function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="text-center mb-10 pt-4">
-        <h1 className="text-3xl font-bold text-zinc-100 mb-3 tracking-tight">
-          What is your <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">property intent</span> today?
+        <h1 className="text-3xl font-bold text-foreground mb-3 tracking-tight">
+          What is your <span className="text-gradient-gold">property intent</span> today?
         </h1>
-        <p className="text-zinc-500 text-sm">Our AI engines are continuously scanning the market for undervalued opportunities.</p>
+        <p className="text-muted-foreground text-sm">Our AI engines are continuously scanning the market for undervalued opportunities.</p>
       </div>
 
       {/* Main AI Intent Bar */}

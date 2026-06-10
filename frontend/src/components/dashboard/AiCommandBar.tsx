@@ -49,13 +49,13 @@ export function AiCommandBar() {
   };
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto mb-8">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-xl blur opacity-30 animate-pulse"></div>
+    <div className="relative w-full max-w-4xl mx-auto mb-8 group">
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500/50 to-yellow-200/50 rounded-xl blur-md opacity-30 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
       
-      <div className="relative bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl p-2 transition-all">
+      <div className="relative glass-panel rounded-xl p-2 transition-all">
         {/* Input Area */}
         <div className="flex items-center">
-          <Sparkles className={`w-5 h-5 ml-3 mr-2 ${status === 'analyzing' ? 'text-cyan-400 animate-spin' : 'text-indigo-400'}`} />
+          <Sparkles className={`w-5 h-5 ml-3 mr-2 ${status === 'analyzing' ? 'text-amber-400 animate-spin' : 'text-amber-500/70'}`} />
           
           <div className="flex-1 overflow-hidden relative h-10">
             <AnimatePresence mode="wait">
@@ -89,7 +89,7 @@ export function AiCommandBar() {
                     onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
                     disabled={status === 'analyzing'}
                     placeholder="e.g. Find undervalued 2-bedroom condos under SGD 1.4M near MRT..."
-                    className="h-full border-0 bg-transparent text-zinc-100 focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-zinc-500 disabled:opacity-50"
+                    className="h-full border-0 bg-transparent text-foreground focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground disabled:opacity-50"
                   />
                 </motion.div>
               )}
@@ -105,7 +105,7 @@ export function AiCommandBar() {
             <Button 
               onClick={handleAnalyze} 
               disabled={!query.trim() || status === 'analyzing'}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg px-6 disabled:opacity-50 transition-all"
+              className="bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-lg px-6 font-semibold shadow-[0_0_15px_rgba(245,158,11,0.4)] disabled:opacity-50 transition-all"
             >
               {status === 'analyzing' ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
