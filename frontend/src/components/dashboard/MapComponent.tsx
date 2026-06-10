@@ -67,12 +67,12 @@ export default function MapComponent() {
     <div className="w-full h-full rounded-xl overflow-hidden border border-zinc-800">
       <MapContainer 
         center={SINGAPORE_CENTER} 
-        zoom={11} 
-        style={{ height: "100%", width: "100%", backgroundColor: "#09090b" }}
+        zoom={12} 
+        style={{ height: "100%", width: "100%", backgroundColor: "#ffffff", minHeight: "300px" }}
         zoomControl={false}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
 

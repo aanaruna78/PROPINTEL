@@ -59,7 +59,7 @@ export default function RootLayout({
               </div>
               <div className="flex-1" />
               <div className="h-9 w-9 rounded-full bg-muted border border-border flex items-center justify-center text-xs font-bold text-amber-500 shadow-inner">
-                US
+                SG
               </div>
             </header>
             <div className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 relative z-10">
