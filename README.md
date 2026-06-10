@@ -1,6 +1,6 @@
 # PROPINTEL AI 🏢🤖
 
-> **An AI-Native Real Estate Intelligence & Predictive Transaction Ecosystem for Singapore**
+> **An AI-Native Real Estate Intelligence & Predictive Transaction Ecosystem**
 
 PROPINTEL AI is a next-generation SaaS platform designed to shift the Singapore real estate industry from "listing-driven discovery" to "intelligence-driven transactions." It provides predictive insights into market liquidity, valuation trends, and investment risks, empowering buyers, sellers, tenants, and investors to make data-driven property decisions.
 
