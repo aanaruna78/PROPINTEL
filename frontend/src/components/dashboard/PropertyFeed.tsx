@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building2, MapPin, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const MOCK_PROPERTIES = [
   {
@@ -93,9 +94,11 @@ export function PropertyFeed() {
                       <span className="text-zinc-300 font-medium">{prop.yield}%</span>
                     </div>
                   </div>
-                  <Button size="sm" variant="secondary" className="bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border-0">
-                    View Intelligence
-                  </Button>
+                  <Link href="/compare">
+                    <Button size="sm" variant="secondary" className="bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border-0">
+                      View Intelligence
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </CardContent>
