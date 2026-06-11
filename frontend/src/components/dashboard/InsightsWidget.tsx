@@ -12,9 +12,9 @@ const MOCK_INSIGHTS = [
 
 export function InsightsWidget() {
   return (
-    <Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm h-full flex flex-col">
+    <Card className="glass-panel h-full flex flex-col border-0 shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-zinc-400 flex items-center">
+        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
           <Lightbulb className="w-4 h-4 mr-2 text-yellow-400" />
           AI Insights
         </CardTitle>
@@ -23,8 +23,8 @@ export function InsightsWidget() {
         <ScrollArea className="h-full px-6 pb-4">
           <div className="flex flex-col gap-3 mt-2">
             {MOCK_INSIGHTS.map((insight) => (
-              <div key={insight.id} className="p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/50 hover:bg-zinc-800 transition-colors group cursor-pointer">
-                <p className="text-sm text-zinc-300 leading-relaxed">{insight.text}</p>
+              <div key={insight.id} className="p-3 rounded-lg bg-secondary/50 border border-border hover:bg-secondary transition-colors group cursor-pointer shadow-sm">
+                <p className="text-sm text-foreground leading-relaxed">{insight.text}</p>
                 <div className="flex items-center text-xs text-indigo-400 mt-2 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                   Explore <ArrowRight className="w-3 h-3 ml-1" />
                 </div>

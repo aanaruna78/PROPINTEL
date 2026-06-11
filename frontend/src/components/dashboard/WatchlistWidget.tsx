@@ -11,9 +11,9 @@ const MOCK_WATCHLIST = [
 
 export function WatchlistWidget() {
   return (
-    <Card className="bg-zinc-900/50 border-zinc-800 backdrop-blur-sm h-full flex flex-col">
+    <Card className="glass-panel h-full flex flex-col border-0 shadow-sm">
       <CardHeader className="pb-2 flex flex-row items-center justify-between">
-        <CardTitle className="text-sm font-medium text-zinc-400 flex items-center">
+        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
           <Bookmark className="w-4 h-4 mr-2 text-cyan-400" />
           Watchlist
         </CardTitle>
@@ -24,18 +24,18 @@ export function WatchlistWidget() {
       <CardContent className="flex-1">
         <div className="space-y-3 mt-2">
           {MOCK_WATCHLIST.map((item) => (
-            <div key={item.id} className="flex justify-between items-center p-2 rounded hover:bg-zinc-800/50 cursor-pointer transition-colors">
+            <div key={item.id} className="flex justify-between items-center p-2 rounded hover:bg-secondary cursor-pointer transition-colors">
               <div>
-                <p className="text-sm font-medium text-zinc-200">{item.name}</p>
-                <p className={`text-xs ${item.status.includes('Drop') ? 'text-emerald-400' : 'text-zinc-500'}`}>{item.status}</p>
+                <p className="text-sm font-medium text-foreground">{item.name}</p>
+                <p className={`text-xs ${item.status.includes('Drop') ? 'text-emerald-500 font-medium' : 'text-muted-foreground'}`}>{item.status}</p>
               </div>
-              <div className="text-sm font-bold text-zinc-300">
-                ${item.price}
+              <div className="text-sm font-bold text-foreground">
+                {item.price}
               </div>
             </div>
           ))}
-          <Button variant="outline" className="w-full mt-4 text-xs bg-transparent border-zinc-700 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200">
-            View Full List
+          <Button variant="outline" className="w-full mt-4 text-xs border-border text-muted-foreground hover:bg-secondary hover:text-foreground shadow-sm">
+            View Full Watchlist
           </Button>
         </div>
       </CardContent>

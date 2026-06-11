@@ -45,63 +45,63 @@ const MOCK_PROPERTIES = [
 export function PropertyFeed() {
   return (
     <div className="flex flex-col gap-4 h-full">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-zinc-100 flex items-center">
-          <TrendingUp className="w-5 h-5 mr-2 text-indigo-400" />
-          Top AI Recommendations
+      <div className="flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-md z-10 py-2 border-b border-border/50">
+        <h2 className="text-lg font-semibold text-foreground flex items-center">
+          <Building2 className="w-5 h-5 mr-2 text-primary" />
+          Recommended Properties
         </h2>
-        <span className="text-xs text-zinc-500">Ranked by Best Buy Score</span>
+        <span className="text-xs text-muted-foreground">Ranked by Best Buy Score</span>
       </div>
       
-      <div className="grid gap-4">
+      <div className="space-y-4 pt-2">
         {MOCK_PROPERTIES.map((prop) => (
-          <Card key={prop.id} className="bg-zinc-900/80 border-zinc-800 hover:border-indigo-500/50 transition-colors cursor-pointer group overflow-hidden">
-            <CardContent className="p-0 flex flex-col sm:flex-row">
+          <Card key={prop.id} className="bg-card border-border hover:border-primary/50 transition-colors cursor-pointer group overflow-hidden shadow-sm">
+            <div className="flex flex-col sm:flex-row">
               {/* Image Placeholder */}
-              <div className="w-full sm:w-48 h-48 sm:h-auto bg-zinc-800 flex items-center justify-center relative overflow-hidden">
-                <Building2 className="w-10 h-10 text-zinc-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/80 to-transparent sm:bg-gradient-to-r" />
-                <Badge className="absolute top-2 left-2 bg-indigo-500/20 text-indigo-300 border-indigo-500/30 font-semibold backdrop-blur-md">
+              <div className="w-full sm:w-48 h-48 sm:h-auto bg-muted flex items-center justify-center relative overflow-hidden">
+                <Building2 className="w-10 h-10 text-muted-foreground/30" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent sm:bg-gradient-to-r" />
+                <Badge className="absolute top-2 left-2 bg-primary/20 text-primary border-primary/30 font-semibold backdrop-blur-md">
                   Score: {prop.bestBuyScore}
                 </Badge>
               </div>
               
               {/* Content */}
-              <div className="p-4 flex-1 flex flex-col justify-between">
+              <div className="flex-1 p-4 md:p-5 flex flex-col justify-between">
                 <div>
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="text-base font-bold text-zinc-100 group-hover:text-indigo-400 transition-colors">{prop.name}</h3>
-                      <p className="text-sm text-zinc-400 flex items-center mt-1">
+                      <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">{prop.name}</h3>
+                      <p className="text-sm text-muted-foreground flex items-center mt-1">
                         <MapPin className="w-3 h-3 mr-1" /> {prop.district} • {prop.bedrooms} Bed • {prop.size} sqft
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-bold text-zinc-100">
+                      <div className="text-lg font-bold text-foreground">
                         ${(prop.price / 1000000).toFixed(2)}M
                       </div>
-                      <div className={`text-xs font-medium mt-1 ${prop.valuationDiff < 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      <div className={`text-xs font-medium mt-1 ${prop.valuationDiff < 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
                         {prop.valuationDiff < 0 ? '↓' : '↑'} {Math.abs(prop.valuationDiff)}% vs Fair Value
                       </div>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-zinc-800/50">
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/50">
                   <div className="flex gap-4 text-sm">
                     <div className="flex flex-col">
-                      <span className="text-zinc-500 text-xs">Est. Yield</span>
-                      <span className="text-zinc-300 font-medium">{prop.yield}%</span>
+                      <span className="text-muted-foreground text-xs">Est. Yield</span>
+                      <span className="text-foreground font-medium">{prop.yield}%</span>
                     </div>
                   </div>
                   <Link href="/compare">
-                    <Button size="sm" variant="secondary" className="bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border-0">
+                    <Button size="sm" variant="secondary" className="bg-secondary hover:bg-secondary/80 text-foreground border-0">
                       View Intelligence
                     </Button>
                   </Link>
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
         ))}
       </div>

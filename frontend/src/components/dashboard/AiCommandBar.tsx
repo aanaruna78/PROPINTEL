@@ -50,12 +50,12 @@ export function AiCommandBar() {
 
   return (
     <div className="relative w-full max-w-4xl mx-auto mb-8 group">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500/50 to-yellow-200/50 rounded-xl blur-md opacity-30 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500/30 to-blue-300/30 rounded-xl blur-md opacity-30 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
       
       <div className="relative glass-panel rounded-xl p-2 transition-all">
         {/* Input Area */}
         <div className="flex items-center">
-          <Sparkles className={`w-5 h-5 ml-3 mr-2 ${status === 'analyzing' ? 'text-amber-400 animate-spin' : 'text-amber-500/70'}`} />
+          <Sparkles className={`w-5 h-5 ml-3 mr-2 ${status === 'analyzing' ? 'text-indigo-600 animate-spin' : 'text-indigo-500/70'}`} />
           
           <div className="flex-1 overflow-hidden relative h-10">
             <AnimatePresence mode="wait">
@@ -105,7 +105,7 @@ export function AiCommandBar() {
             <Button 
               onClick={handleAnalyze} 
               disabled={!query.trim() || status === 'analyzing'}
-              className="bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-lg px-6 font-semibold shadow-[0_0_15px_rgba(245,158,11,0.4)] disabled:opacity-50 transition-all"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-6 font-semibold shadow-[0_4px_14px_0_rgb(67,56,202,0.39)] disabled:opacity-50 transition-all"
             >
               {status === 'analyzing' ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -125,16 +125,16 @@ export function AiCommandBar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="flex flex-wrap items-center gap-2 mt-4 px-2"
+            className="mt-4 pt-4 border-t border-border/50 flex flex-wrap gap-2"
           >
-            <span className="text-xs text-zinc-500 mr-1 flex items-center">
-              <LightbulbIcon className="w-3 h-3 mr-1" /> Try asking:
+            <span className="text-xs text-muted-foreground mr-1 flex items-center">
+              <Lightbulb className="w-3 h-3 mr-1" /> Try:
             </span>
             {SUGGESTIONS.map((suggestion, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSuggestionClick(suggestion)}
-                className="text-xs text-zinc-400 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-full px-3 py-1.5 transition-colors text-left"
+                className="text-xs text-muted-foreground bg-secondary hover:bg-secondary/80 border border-border rounded-full px-3 py-1.5 transition-colors text-left"
               >
                 {suggestion}
               </button>

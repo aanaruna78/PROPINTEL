@@ -13,7 +13,7 @@ export default function DashboardPage() {
         {/* Hero Text */}
         <div className="mb-6 pt-2">
           <h1 className="text-3xl font-bold text-foreground mb-2 tracking-tight">
-            What is your <span className="text-gradient-gold">property intent</span> today?
+            What is your <span className="text-gradient-indigo">property intent</span> today?
           </h1>
           <p className="text-muted-foreground text-sm">
             Our AI engines are continuously scanning the market for undervalued opportunities.
