@@ -32,9 +32,9 @@ export default function RootLayout({
         <div className="min-h-screen flex w-full">
           {/* Sidebar */}
           <aside className="w-64 border-r border-border bg-card/60 backdrop-blur-2xl hidden md:flex flex-col relative z-20">
-            <div className="h-20 flex items-center px-6 border-b border-border/50 py-3">
-              <Link href="/" className="flex items-center h-full">
-                <img src="/logo-light.png" alt="PROPINTEL Logo" className="h-full w-auto object-contain" />
+            <div className="h-24 flex items-center justify-center border-b border-border/50 p-4">
+              <Link href="/" className="flex items-center justify-center w-full">
+                <img src="/logo-light.png" alt="PROPINTEL Logo" className="h-auto w-44 object-contain" />
               </Link>
             </div>
             <nav className="flex flex-col gap-2 p-4">
@@ -53,9 +53,9 @@ export default function RootLayout({
 
             {/* Desktop / Mobile Header */}
             <header className="h-16 border-b border-border flex items-center justify-between px-6 bg-background/80 backdrop-blur-xl sticky top-0 z-30">
-              <div className="md:hidden flex items-center h-full py-2">
-                <Link href="/" className="flex items-center h-full">
-                  <img src="/logo-light.png" alt="PROPINTEL Logo" className="h-full w-auto object-contain" />
+              <div className="md:hidden flex items-center">
+                <Link href="/" className="flex items-center">
+                  <img src="/logo-light.png" alt="PROPINTEL Logo" className="h-auto w-32 object-contain" />
                 </Link>
               </div>
               <div className="flex-1 flex justify-center md:justify-start">
