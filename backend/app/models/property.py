@@ -14,6 +14,11 @@ class PropertyProject(Base):
     tenure = Column(String(100))
     completion_year = Column(Integer)
     
+    # Specific fields
+    developer = Column(String(255), nullable=True)
+    total_units = Column(Integer, nullable=True)
+    block_number = Column(String(50), nullable=True) # Used for HDB blocks
+    
     # PostGIS Point (Longitude, Latitude) with standard SRID 4326
     location = Column(Geometry(geometry_type='POINT', srid=4326), nullable=False)
     
