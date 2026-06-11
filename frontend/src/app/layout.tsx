@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import { AiSystemStats } from "@/components/dashboard/AiSystemStats";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -50,15 +51,17 @@ export default function RootLayout({
             <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
             <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-slate-400/10 blur-[120px] pointer-events-none" />
 
-            {/* Mobile Header */}
+            {/* Desktop / Mobile Header */}
             <header className="h-16 border-b border-border flex items-center justify-between px-6 bg-background/80 backdrop-blur-xl sticky top-0 z-30">
               <div className="md:hidden flex items-center">
                 <Link href="/">
                   <img src="/logo-light.png" alt="PROPINTEL Logo" className="h-10 w-auto object-contain mix-blend-multiply" />
                 </Link>
               </div>
-              <div className="flex-1" />
-              <div className="h-9 w-9 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center text-xs font-bold text-indigo-700 shadow-sm">
+              <div className="flex-1 flex justify-center md:justify-start">
+                <AiSystemStats />
+              </div>
+              <div className="h-9 w-9 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center text-xs font-bold text-indigo-700 shadow-sm shrink-0">
                 SG
               </div>
             </header>
