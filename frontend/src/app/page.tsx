@@ -7,49 +7,46 @@ import { WatchlistWidget } from "@/components/dashboard/WatchlistWidget";
 
 export default function DashboardPage() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-full">
-      {/* LEFT COLUMN: Scrollable Feed */}
-      <div className="lg:col-span-7 xl:col-span-6 space-y-6 flex flex-col min-w-0">
-        {/* Hero Text */}
-        <div className="mb-6 pt-2">
-          <h1 className="text-3xl font-bold text-foreground mb-2 tracking-tight">
-            What is your <span className="text-gradient-indigo">property intent</span> today?
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Our AI engines are continuously scanning the market for undervalued opportunities.
-          </p>
-        </div>
+    <div className="flex flex-col gap-6 min-h-full">
+      {/* Hero Text */}
+      <div className="pt-2">
+        <h1 className="text-3xl font-bold text-foreground mb-2 tracking-tight">
+          What is your <span className="text-gradient-indigo">property intent</span> today?
+        </h1>
+        <p className="text-muted-foreground text-sm">
+          Our AI engines are continuously scanning the market for undervalued opportunities.
+        </p>
+      </div>
 
-        {/* AI Command Bar */}
-        <div className="w-full">
-          <AiCommandBar />
-        </div>
+      {/* AI Command Bar */}
+      <div className="w-full">
+        <AiCommandBar />
+      </div>
 
-        {/* Quick Intelligence Widgets (Horizontal Scroll Row) */}
-        <div className="flex flex-nowrap overflow-x-auto gap-4 pb-4 snap-x scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
-          <div className="w-[300px] lg:w-[320px] shrink-0 snap-start h-56">
+      {/* Top Intelligence Dashboard (Widgets + Map) */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+        {/* Left Side: 3 Small Widgets */}
+        <div className="xl:col-span-7 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="h-[320px]">
             <MarketPulseWidget />
           </div>
-          <div className="w-[300px] lg:w-[320px] shrink-0 snap-start h-56">
+          <div className="h-[320px]">
             <WatchlistWidget />
           </div>
-          <div className="w-[300px] lg:w-[320px] shrink-0 snap-start h-56">
+          <div className="h-[320px]">
             <InsightsWidget />
           </div>
         </div>
-
-        {/* Main Feed */}
-        <div className="pt-6">
-          <PropertyFeed />
+        
+        {/* Right Side: Heatmap Map */}
+        <div className="xl:col-span-5 h-[320px]">
+          <DistrictHeatmapWidget />
         </div>
       </div>
 
-      {/* RIGHT COLUMN: Sticky Interactive Map */}
-      {/* On mobile, this will stack. On LG screens, it sticks to the viewport. */}
-      <div className="lg:col-span-5 xl:col-span-6 relative min-w-0">
-        <div className="lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] h-[500px] w-full rounded-xl overflow-hidden shadow-sm relative z-10 flex flex-col">
-          <DistrictHeatmapWidget />
-        </div>
+      {/* Full Width Feed */}
+      <div className="pt-4">
+        <PropertyFeed />
       </div>
     </div>
   );

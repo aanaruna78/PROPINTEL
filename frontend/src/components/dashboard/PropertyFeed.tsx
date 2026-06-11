@@ -53,7 +53,7 @@ export function PropertyFeed() {
         <span className="text-xs text-muted-foreground">Ranked by Best Buy Score</span>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-2">
         {MOCK_PROPERTIES.map((prop) => (
           <Card key={prop.id} className="bg-card border-border hover:border-primary/50 transition-colors cursor-pointer group overflow-hidden shadow-sm flex flex-col">
             {/* Image Placeholder */}
