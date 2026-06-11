@@ -17,6 +17,7 @@ const MOCK_PROPERTIES = [
     bestBuyScore: 94,
     valuationDiff: -5.2, // undervalued by 5.2%
     yield: 4.8,
+    image: "/properties/marina-one.png"
   },
   {
     id: "PROP-002",
@@ -28,6 +29,7 @@ const MOCK_PROPERTIES = [
     bestBuyScore: 88,
     valuationDiff: -2.1,
     yield: 4.2,
+    image: "/properties/the-sail.png"
   },
   {
     id: "PROP-003",
@@ -39,6 +41,7 @@ const MOCK_PROPERTIES = [
     bestBuyScore: 76,
     valuationDiff: 1.5,
     yield: 3.5,
+    image: "/properties/reflections.png"
   }
 ];
 
@@ -57,10 +60,10 @@ export function PropertyFeed() {
         {MOCK_PROPERTIES.map((prop) => (
           <Card key={prop.id} className="bg-card border-border hover:border-primary/50 transition-colors cursor-pointer group overflow-hidden shadow-sm flex flex-col">
             {/* Image Placeholder */}
-            <div className="w-full h-40 bg-muted flex items-center justify-center relative overflow-hidden shrink-0">
-              <Building2 className="w-10 h-10 text-muted-foreground/30" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              <Badge className="absolute top-2 left-2 bg-primary/20 text-primary border-primary/30 font-semibold backdrop-blur-md">
+            <div className="w-full h-48 bg-muted relative overflow-hidden shrink-0 group">
+              <img src={prop.image} alt={prop.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+              <Badge className="absolute top-3 left-3 bg-primary/90 text-primary-foreground border-0 font-semibold shadow-md backdrop-blur-md">
                 Score: {prop.bestBuyScore}
               </Badge>
             </div>
