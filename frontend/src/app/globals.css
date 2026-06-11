@@ -35,25 +35,25 @@
 :root {
   /* Enterprise Light Theme */
   --background: #f8fafc; /* Slate 50 - pristine off-white */
-  --foreground: #0f172a; /* Slate 900 - dark navy/grey */
+  --foreground: #020617; /* Slate 950 - near black for maximum contrast */
   
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #020617;
   
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --popover-foreground: #020617;
   
   --primary: #4338ca; /* Royal Indigo */
   --primary-foreground: #ffffff;
   
   --secondary: #f1f5f9; /* Slate 100 */
-  --secondary-foreground: #0f172a;
+  --secondary-foreground: #020617;
   
   --muted: #f1f5f9;
-  --muted-foreground: #64748b; /* Slate 500 */
+  --muted-foreground: #475569; /* Slate 600 - much darker muted text */
   
   --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
+  --accent-foreground: #020617;
   
   --destructive: #ef4444;
   --border: #e2e8f0; /* Slate 200 */
