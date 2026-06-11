@@ -34,7 +34,7 @@ export default function RootLayout({
           <aside className="w-64 border-r border-border bg-card/60 backdrop-blur-2xl hidden md:flex flex-col relative z-20">
             <div className="h-24 flex items-center px-6 border-b border-border/50">
               <Link href="/">
-                <img src="/logo-light.png" alt="PROPINTEL Logo" className="h-24 w-auto object-contain mix-blend-multiply scale-150 origin-left" />
+                <img src="/logo-light.png" alt="PROPINTEL Logo" className="h-24 w-auto object-contain scale-150 origin-left" />
               </Link>
             </div>
             <nav className="flex flex-col gap-2 p-4">
@@ -55,7 +55,7 @@ export default function RootLayout({
             <header className="h-16 border-b border-border flex items-center justify-between px-6 bg-background/80 backdrop-blur-xl sticky top-0 z-30">
               <div className="md:hidden flex items-center">
                 <Link href="/">
-                  <img src="/logo-light.png" alt="PROPINTEL Logo" className="h-16 w-auto object-contain mix-blend-multiply scale-150 origin-left ml-4" />
+                  <img src="/logo-light.png" alt="PROPINTEL Logo" className="h-16 w-auto object-contain scale-150 origin-left ml-4" />
                 </Link>
               </div>
               <div className="flex-1 flex justify-center md:justify-start">
