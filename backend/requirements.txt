@@ -7,3 +7,5 @@ pydantic[email]==2.7.4
 pydantic-settings==2.3.4
 redis==5.0.4
 python-dotenv==1.0.1
+geoalchemy2>=0.15.1
+psycopg2-binary>=2.9.9
