@@ -9,7 +9,7 @@ export default function DashboardPage() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-full">
       {/* LEFT COLUMN: Scrollable Feed */}
-      <div className="lg:col-span-7 xl:col-span-6 space-y-6 flex flex-col">
+      <div className="lg:col-span-7 xl:col-span-6 space-y-6 flex flex-col min-w-0">
         {/* Hero Text */}
         <div className="mb-6 pt-2">
           <h1 className="text-3xl font-bold text-foreground mb-2 tracking-tight">
@@ -25,18 +25,17 @@ export default function DashboardPage() {
           <AiCommandBar />
         </div>
 
-        {/* Quick Intelligence Widgets (Bento Grid) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="h-48">
+        {/* Quick Intelligence Widgets (Horizontal Scroll Row) */}
+        <div className="flex flex-nowrap overflow-x-auto gap-4 pb-4 snap-x scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="w-[300px] lg:w-[320px] shrink-0 snap-start h-56">
             <MarketPulseWidget />
           </div>
-          <div className="h-48">
+          <div className="w-[300px] lg:w-[320px] shrink-0 snap-start h-56">
             <WatchlistWidget />
           </div>
-        </div>
-        
-        <div className="h-48 w-full">
-          <InsightsWidget />
+          <div className="w-[300px] lg:w-[320px] shrink-0 snap-start h-56">
+            <InsightsWidget />
+          </div>
         </div>
 
         {/* Main Feed */}
@@ -47,8 +46,8 @@ export default function DashboardPage() {
 
       {/* RIGHT COLUMN: Sticky Interactive Map */}
       {/* On mobile, this will stack. On LG screens, it sticks to the viewport. */}
-      <div className="lg:col-span-5 xl:col-span-6 relative">
-        <div className="lg:sticky lg:top-0 lg:h-[calc(100vh-6rem)] h-[500px] w-full rounded-xl overflow-hidden shadow-2xl border border-white/5 relative z-10 flex flex-col">
+      <div className="lg:col-span-5 xl:col-span-6 relative min-w-0">
+        <div className="lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] h-[500px] w-full rounded-xl overflow-hidden shadow-sm relative z-10 flex flex-col">
           <DistrictHeatmapWidget />
         </div>
       </div>

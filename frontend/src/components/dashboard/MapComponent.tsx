@@ -64,11 +64,11 @@ export default function MapComponent() {
   };
 
   return (
-    <div className="w-full h-full rounded-xl overflow-hidden border border-zinc-800">
+    <div className="w-full h-full relative rounded-lg overflow-hidden border border-border">
       <MapContainer 
         center={SINGAPORE_CENTER} 
         zoom={12} 
-        style={{ height: "100%", width: "100%", backgroundColor: "#ffffff", minHeight: "300px" }}
+        style={{ height: "100%", width: "100%", backgroundColor: "#f8fafc", zIndex: 0 }}
         zoomControl={false}
       >
         <TileLayer
@@ -88,11 +88,11 @@ export default function MapComponent() {
               weight: 2
             }}
           >
-            <Tooltip className="bg-zinc-900 border-zinc-800 text-zinc-100 shadow-xl" direction="top" opacity={1}>
+            <Tooltip className="bg-card border-border text-foreground shadow-xl" direction="top" opacity={1}>
               <div className="font-bold text-sm mb-1">{zone.name} ({zone.id})</div>
-              <div className="text-xs text-zinc-400">Demand Vol: <span className="text-zinc-100 font-medium">{zone.demand}</span></div>
-              <div className="text-xs text-zinc-400">vs Fair Value: <span className={`font-medium ${zone.movement === 'rising' ? 'text-emerald-400' : 'text-rose-400'}`}>{zone.valuationDiff}</span></div>
-              <div className="text-xs text-zinc-400">Est. Yield: <span className="text-zinc-100 font-medium">{zone.yield}</span></div>
+              <div className="text-xs text-muted-foreground">Demand Vol: <span className="text-foreground font-medium">{zone.demand}</span></div>
+              <div className="text-xs text-muted-foreground">vs Fair Value: <span className={`font-medium ${zone.movement === 'rising' ? 'text-emerald-600' : 'text-rose-600'}`}>{zone.valuationDiff}</span></div>
+              <div className="text-xs text-muted-foreground">Est. Yield: <span className="text-foreground font-medium">{zone.yield}</span></div>
             </Tooltip>
           </CircleMarker>
         ))}

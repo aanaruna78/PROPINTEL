@@ -53,53 +53,47 @@ export function PropertyFeed() {
         <span className="text-xs text-muted-foreground">Ranked by Best Buy Score</span>
       </div>
       
-      <div className="space-y-4 pt-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
         {MOCK_PROPERTIES.map((prop) => (
-          <Card key={prop.id} className="bg-card border-border hover:border-primary/50 transition-colors cursor-pointer group overflow-hidden shadow-sm">
-            <div className="flex flex-col sm:flex-row">
-              {/* Image Placeholder */}
-              <div className="w-full sm:w-48 h-48 sm:h-auto bg-muted flex items-center justify-center relative overflow-hidden">
-                <Building2 className="w-10 h-10 text-muted-foreground/30" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent sm:bg-gradient-to-r" />
-                <Badge className="absolute top-2 left-2 bg-primary/20 text-primary border-primary/30 font-semibold backdrop-blur-md">
-                  Score: {prop.bestBuyScore}
-                </Badge>
+          <Card key={prop.id} className="bg-card border-border hover:border-primary/50 transition-colors cursor-pointer group overflow-hidden shadow-sm flex flex-col">
+            {/* Image Placeholder */}
+            <div className="w-full h-40 bg-muted flex items-center justify-center relative overflow-hidden shrink-0">
+              <Building2 className="w-10 h-10 text-muted-foreground/30" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <Badge className="absolute top-2 left-2 bg-primary/20 text-primary border-primary/30 font-semibold backdrop-blur-md">
+                Score: {prop.bestBuyScore}
+              </Badge>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1 p-4 flex flex-col justify-between">
+              <div>
+                <div className="flex flex-col items-start gap-1">
+                  <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">{prop.name}</h3>
+                  <p className="text-xs text-muted-foreground flex items-center">
+                    <MapPin className="w-3 h-3 mr-1 shrink-0" /> <span className="truncate">{prop.district} • {prop.bedrooms} Bed • {prop.size} sqft</span>
+                  </p>
+                </div>
+                <div className="mt-3">
+                  <div className="text-lg font-bold text-foreground">
+                    ${(prop.price / 1000000).toFixed(2)}M
+                  </div>
+                  <div className={`text-xs font-medium mt-1 ${prop.valuationDiff < 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                    {prop.valuationDiff < 0 ? '↓' : '↑'} {Math.abs(prop.valuationDiff)}% vs Fair Value
+                  </div>
+                </div>
               </div>
               
-              {/* Content */}
-              <div className="flex-1 p-4 md:p-5 flex flex-col justify-between">
-                <div>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">{prop.name}</h3>
-                      <p className="text-sm text-muted-foreground flex items-center mt-1">
-                        <MapPin className="w-3 h-3 mr-1" /> {prop.district} • {prop.bedrooms} Bed • {prop.size} sqft
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-foreground">
-                        ${(prop.price / 1000000).toFixed(2)}M
-                      </div>
-                      <div className={`text-xs font-medium mt-1 ${prop.valuationDiff < 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
-                        {prop.valuationDiff < 0 ? '↓' : '↑'} {Math.abs(prop.valuationDiff)}% vs Fair Value
-                      </div>
-                    </div>
-                  </div>
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/50">
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground text-[10px] uppercase tracking-wider">Est. Yield</span>
+                  <span className="text-foreground text-sm font-medium">{prop.yield}%</span>
                 </div>
-                
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/50">
-                  <div className="flex gap-4 text-sm">
-                    <div className="flex flex-col">
-                      <span className="text-muted-foreground text-xs">Est. Yield</span>
-                      <span className="text-foreground font-medium">{prop.yield}%</span>
-                    </div>
-                  </div>
-                  <Link href="/compare">
-                    <Button size="sm" variant="secondary" className="bg-secondary hover:bg-secondary/80 text-foreground border-0">
-                      View Intelligence
-                    </Button>
-                  </Link>
-                </div>
+                <Link href="/compare" onClick={(e) => e.stopPropagation()}>
+                  <Button size="sm" variant="secondary" className="bg-secondary hover:bg-secondary/80 text-foreground border-0 text-xs h-8">
+                    Intelligence
+                  </Button>
+                </Link>
               </div>
             </div>
           </Card>

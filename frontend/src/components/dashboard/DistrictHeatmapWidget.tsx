@@ -17,8 +17,8 @@ const MapComponent = dynamic(() => import("./MapComponent"), {
 
 export function DistrictHeatmapWidget() {
   return (
-    <Card className="glass-panel h-full min-h-[300px] flex flex-col w-full rounded-xl overflow-hidden border-0">
-      <CardHeader className="pb-2 flex flex-row items-center justify-between">
+    <Card className="glass-panel h-full min-h-[300px] flex flex-col w-full rounded-xl border-0 shadow-sm">
+      <CardHeader className="pb-2 flex flex-row items-center justify-between shrink-0">
         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
           <Map className="w-4 h-4 mr-2 text-amber-500" />
           Liquidity & Demand Heatmap
@@ -28,8 +28,10 @@ export function DistrictHeatmapWidget() {
           <span className="flex items-center text-[10px] text-zinc-400"><span className="w-2 h-2 rounded-full bg-rose-400 mr-1"></span> Overvalued</span>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 p-2 pb-3 px-3">
-        <MapComponent />
+      <CardContent className="flex-1 p-3 pt-0 relative min-h-[250px]">
+        <div className="absolute inset-3 top-0">
+          <MapComponent />
+        </div>
       </CardContent>
     </Card>
   );
