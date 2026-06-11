@@ -9,11 +9,11 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6 min-h-full">
       {/* Hero Text */}
-      <div className="pt-2">
-        <h1 className="text-3xl font-bold text-foreground mb-2 tracking-tight">
+      <div className="pt-4 flex flex-col items-center text-center">
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3 tracking-tight">
           What is your <span className="text-gradient-indigo">property intent</span> today?
         </h1>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
           Our AI engines are continuously scanning the market for undervalued opportunities.
         </p>
       </div>
