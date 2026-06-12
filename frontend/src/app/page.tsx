@@ -4,6 +4,7 @@ import { InsightsWidget } from "@/components/dashboard/InsightsWidget";
 import { DistrictHeatmapWidget } from "@/components/dashboard/DistrictHeatmapWidget";
 import { PropertyFeed } from "@/components/dashboard/PropertyFeed";
 import { WatchlistWidget } from "@/components/dashboard/WatchlistWidget";
+import { RoleDashboardWidget } from "@/components/dashboard/RoleDashboardWidget";
 
 export default function DashboardPage() {
   return (
@@ -21,6 +22,11 @@ export default function DashboardPage() {
       {/* AI Command Bar */}
       <div className="w-full">
         <AiCommandBar />
+      </div>
+
+      {/* Role-Based Intelligence Panel */}
+      <div className="w-full">
+        <RoleDashboardWidget />
       </div>
 
       {/* Top Intelligence Dashboard (Widgets + Map) */}

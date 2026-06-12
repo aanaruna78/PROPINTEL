@@ -2,14 +2,19 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.core.database import engine
 from app.models.property import Base
-from app.api.endpoints import properties
+from app.models.user import User # Ensure SQLAlchemy registers the user table
+from app.models.tenant import Tenant # Ensure SQLAlchemy registers the tenant table
+from app.api.endpoints import properties, auth, tenant, rbac
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: Connect to DB, Redis, etc.
     print("Starting up PROPINTEL AI Backend...")
     # Initialize database tables (for dev purposes; normally use Alembic)
-    Base.metadata.create_all(bind=engine)
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        print(f"Skipping database table creation (no database connection or PostGIS support): {e}")
     yield
     # Shutdown: Close connections
     print("Shutting down PROPINTEL AI Backend...")
@@ -21,6 +26,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+from fastapi.middleware.cors import CORSMiddleware
+
+# Enable CORS for frontend API consumption
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "propintel-api"}
@@ -30,4 +46,7 @@ async def root():
     return {"message": "Welcome to PROPINTEL AI API"}
 
 # Register Routers
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
+app.include_router(tenant.router, prefix="/api/v1/tenants", tags=["Tenancy"])
 app.include_router(properties.router, prefix="/api/v1/properties", tags=["Properties"])
+app.include_router(rbac.router, prefix="/api/v1/rbac", tags=["RBAC"])

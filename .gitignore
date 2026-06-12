@@ -11,6 +11,7 @@ env/
 .venv/
 .pytest_cache/
 alembic.ini
+backend/logs/
 
 # Node / Next.js
 node_modules/
