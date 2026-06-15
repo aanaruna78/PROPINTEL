@@ -7,7 +7,7 @@ import uuid
 from app.core.database import get_db
 from app.core.security import verify_password, get_password_hash, create_access_token, create_refresh_token, REVOKED_TOKENS
 from app.models.user import User
-from app.schemas.user import UserCreate, UserResponse, Token, UserLogin, OtpRequest, OtpVerify, TokenRefreshRequest, SessionResponse
+from app.schemas.user import UserCreate, UserResponse, Token, UserLogin, OtpRequest, OtpVerify, TokenRefreshRequest, SessionResponse, ForgotPasswordRequest, ResetPasswordRequest
 from app.api.deps import get_current_user, MOCK_USER_DICT, MOCK_USERS_DB
 from app.services.audit_service import log_audit_event
 from jose import jwt, JWTError
@@ -301,7 +301,7 @@ def send_otp(request: OtpRequest):
     return {"message": f"OTP successfully sent to {request.email_or_mobile}.", "code_length": 6}
 
 @router.post("/verify-otp", response_model=Token)
-def verify_otp(verification: OtpVerify, request: Request):
+def verify_otp(verification: OtpVerify, request: Request, db: Session = Depends(get_db)):
     """
     Verify 6-digit OTP. Accepts code '123456' for simulation.
     """
@@ -311,29 +311,62 @@ def verify_otp(verification: OtpVerify, request: Request):
             detail="Invalid OTP code. Use '123456' for testing."
         )
         
-    email = verification.email_or_mobile if "@" in verification.email_or_mobile else "otp_user@propintel.ai"
-    
-    # Check in-memory mock registered users database
-    if email in MOCK_USERS_DB:
-        mock_user = MOCK_USERS_DB[email]
-        access_token = create_access_token(
-            subject=mock_user["email"], 
-            role=mock_user["role"],
-            tenant_id=mock_user["tenant_id"]
-        )
-        refresh_token = create_refresh_token(subject=mock_user["email"])
-        register_session(mock_user["email"], access_token, refresh_token, request)
-        
-        return {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-            "token_type": "bearer"
-        }
-    
-    # Resolve tenant_id and role from email prefix if present
-    tenant_id = "propintel"
+    target = verification.email_or_mobile.strip()
+    email = None
     role = "buyer"
-    if "@" in email:
+    tenant_id = "propintel"
+    
+    # 1. Try to find user in database if connection is online
+    try:
+        if "@" in target:
+            user = db.query(User).filter(User.email == target).first()
+        else:
+            user = db.query(User).filter(User.mobile_number == target).first()
+            if not user:
+                target_digits = "".join(c for c in target if c.isdigit())
+                if target_digits:
+                    all_users = db.query(User).all()
+                    for u in all_users:
+                        if u.mobile_number:
+                            u_digits = "".join(c for c in u.mobile_number if c.isdigit())
+                            if u_digits and (u_digits.endswith(target_digits) or target_digits.endswith(u_digits)):
+                                user = u
+                                break
+        if user:
+            email = user.email
+            role = user.role
+            tenant_id = user.tenant_id or "propintel"
+    except Exception as db_err:
+        print(f"Database query failed in verify_otp, checking mock data: {db_err}")
+
+    # 2. Try to find in MOCK_USERS_DB if not found
+    if not email:
+        if "@" in target:
+            if target in MOCK_USERS_DB:
+                email = target
+                role = MOCK_USERS_DB[target].get("role", "buyer")
+                tenant_id = MOCK_USERS_DB[target].get("tenant_id", "propintel")
+        else:
+            target_digits = "".join(c for c in target if c.isdigit())
+            for m_email, m_user in MOCK_USERS_DB.items():
+                m_phone = m_user.get("mobile_number", "")
+                if m_phone:
+                    m_digits = "".join(c for c in m_phone if c.isdigit())
+                    if m_digits and target_digits and (m_digits.endswith(target_digits) or target_digits.endswith(m_digits)):
+                        email = m_email
+                        role = m_user.get("role", "buyer")
+                        tenant_id = m_user.get("tenant_id", "propintel")
+                        break
+
+    # 3. Dynamic email/phone mock user resolution fallback
+    if not email:
+        if "@" in target:
+            email = target
+        else:
+            target_digits = "".join(c for c in target if c.isdigit())
+            email = f"phone_{target_digits}@propintel.ai" if target_digits else "otp_user@propintel.ai"
+            
+        # Resolve tenant_id and role from email prefix if present
         email_prefix = email.split("@")[0]
         parts = email_prefix.replace("-", ".").replace("_", ".").split(".")
         if len(parts) > 1 and parts[-1] in ("era", "propnex", "huttons", "orangeTee"):
@@ -496,6 +529,54 @@ def list_sessions(request: Request, current_user: User = Depends(get_current_use
     auth_header = request.headers.get("authorization")
     token = auth_header.split(" ")[1] if auth_header and " " in auth_header else None
     
+    # Ensure current session is registered in MOCK_SESSIONS
+    has_current = any(s["access_token"] == token for s in MOCK_SESSIONS) if token else True
+    if not has_current and token:
+        user_agent = request.headers.get("user-agent", "Web Browser")
+        device = "Web Browser"
+        if "Mobile" in user_agent or "Android" in user_agent or "iPhone" in user_agent:
+            device = "Mobile App"
+        ip_address = request.headers.get("x-forwarded-for", request.client.host if request.client else "127.0.0.1")
+        if "," in ip_address:
+            ip_address = ip_address.split(",")[0].strip()
+        MOCK_SESSIONS.append({
+            "session_id": str(uuid.uuid4()),
+            "email": current_user.email,
+            "device": device,
+            "channel": "web",
+            "ip_address": ip_address,
+            "last_active": datetime.utcnow(),
+            "access_token": token,
+            "refresh_token": f"mock_refresh_{str(uuid.uuid4())[:8]}"
+        })
+
+    # Ensure they have seeded mock sessions for UI demonstration (WhatsApp, Mobile App)
+    has_seed = any(s["email"] == current_user.email and s["channel"] != "web" for s in MOCK_SESSIONS)
+    if not has_seed:
+        seed_sessions = [
+            {
+                "session_id": f"session-wa-{str(uuid.uuid4())[:8]}",
+                "email": current_user.email,
+                "device": "WhatsApp Gateway (WhatsApp Business)",
+                "channel": "whatsapp",
+                "ip_address": "18.234.12.98",
+                "last_active": datetime.utcnow() - timedelta(minutes=15),
+                "access_token": f"mock_access_wa_{str(uuid.uuid4())[:8]}",
+                "refresh_token": f"mock_refresh_wa_{str(uuid.uuid4())[:8]}"
+            },
+            {
+                "session_id": f"session-mob-{str(uuid.uuid4())[:8]}",
+                "email": current_user.email,
+                "device": "iOS Mobile App (iPhone 16 Pro)",
+                "channel": "mobile",
+                "ip_address": "103.88.23.111",
+                "last_active": datetime.utcnow() - timedelta(hours=1),
+                "access_token": f"mock_access_mob_{str(uuid.uuid4())[:8]}",
+                "refresh_token": f"mock_refresh_mob_{str(uuid.uuid4())[:8]}"
+            }
+        ]
+        MOCK_SESSIONS.extend(seed_sessions)
+        
     user_sessions = []
     for s in MOCK_SESSIONS:
         if s["email"] == current_user.email:
@@ -546,3 +627,82 @@ def get_me(current_user: User = Depends(get_current_user)):
     Retrieve currently logged-in user profile.
     """
     return current_user
+
+@router.post("/forgot-password")
+def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    """
+    Mock send reset password code. Validate if the email exists in DB or mock records.
+    """
+    user_exists = False
+    try:
+        user = db.query(User).filter(User.email == payload.email).first()
+        if user:
+            user_exists = True
+    except Exception as e:
+        print(f"Database query failed in forgot_password: {e}")
+        
+    if payload.email in MOCK_USERS_DB:
+        user_exists = True
+        
+    if "@propintel.ai" in payload.email:
+        user_exists = True
+        
+    if not user_exists:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Email address not registered."
+        )
+        
+    print(f"Password reset code 654321 requested for: {payload.email}")
+    return {"message": "Password reset code sent to your email. Use '654321' to reset."}
+
+@router.post("/reset-password")
+def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db)):
+    """
+    Reset password using mock code '654321'.
+    """
+    if payload.code != "654321":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid verification code. Use '654321' for testing."
+        )
+    
+    # Update password in DB
+    try:
+        user = db.query(User).filter(User.email == payload.email).first()
+        if user:
+            user.hashed_password = get_password_hash(payload.new_password)
+            db.commit()
+            return {"message": "Password successfully updated."}
+    except Exception as e:
+        print(f"Database password update failed, checking mock credentials: {e}")
+        
+    # Update password in MOCK_USERS_DB
+    if payload.email in MOCK_USERS_DB:
+        MOCK_USERS_DB[payload.email]["password"] = payload.new_password
+        return {"message": "Password successfully updated in mock database."}
+        
+    # Support dynamic prefix users
+    if "@propintel.ai" in payload.email:
+        email_prefix = payload.email.split("@")[0]
+        parts = email_prefix.replace("-", ".").replace("_", ".").split(".")
+        role = "buyer"
+        if "admin" in parts:
+            role = "admin"
+        elif "manager" in parts or "agency_manager" in parts:
+            role = "agency_manager"
+            
+        MOCK_USERS_DB[payload.email] = {
+            "email": payload.email,
+            "password": payload.new_password,
+            "full_name": email_prefix.capitalize(),
+            "role": role,
+            "tenant_id": "propintel",
+            "mobile_number": "+65 9111 2222"
+        }
+        return {"message": "Password successfully updated in mock database."}
+        
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Email address not found."
+    )

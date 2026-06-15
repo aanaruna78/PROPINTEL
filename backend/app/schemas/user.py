@@ -50,3 +50,11 @@ class OtpRequest(BaseModel):
 class OtpVerify(BaseModel):
     email_or_mobile: str
     code: str
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+    code: str
+    new_password: str

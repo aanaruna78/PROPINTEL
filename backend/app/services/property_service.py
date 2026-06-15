@@ -3,7 +3,14 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from app.models.property import PropertyProject
 from app.models.amenity import Amenity
-from geoalchemy2.functions import ST_DWithin, ST_AsText, ST_X, ST_Y
+
+# geoalchemy2 spatial functions — optional; not installed = offline/mock mode
+try:
+    from geoalchemy2.functions import ST_DWithin, ST_AsText, ST_X, ST_Y
+    _geo_available = True
+except ImportError:
+    _geo_available = False
+    ST_DWithin = ST_AsText = ST_X = ST_Y = None
 
 # --- Haversine Distance helper for mock spatial queries ---
 def calculate_distance_meters(lon1, lat1, lon2, lat2):

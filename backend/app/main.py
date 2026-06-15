@@ -29,9 +29,16 @@ app = FastAPI(
 from fastapi.middleware.cors import CORSMiddleware
 
 # Enable CORS for frontend API consumption
+# NOTE: allow_origins=["*"] is incompatible with allow_credentials=True (browser rejects it).
+# Use an explicit list of trusted origins instead.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://192.168.88.9:3000",  # LAN network address for device testing
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

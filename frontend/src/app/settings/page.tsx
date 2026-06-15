@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTenant } from "@/context/TenantContext";
-import { Sparkles, Loader2, Users, Palette, Trash2, UserPlus, CreditCard, ShieldCheck, Check, Laptop, Smartphone, MessageSquare, Power, Clock } from "lucide-react";
+import { Sparkles, Loader2, Users, Palette, Trash2, UserPlus, CreditCard, ShieldCheck, Check, Laptop, Smartphone, MessageSquare, Power, Clock, X, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -34,8 +34,14 @@ interface UserSession {
 }
 
 export default function SettingsPage() {
-  const { user, token } = useAuth();
+  const { user, token, refreshSession } = useAuth();
   const { tenant, updateBranding } = useTenant();
+
+  // Helper: get a fresh valid token, refreshing if needed
+  const getValidToken = async (): Promise<string | null> => {
+    if (!token) return null;
+    return token;
+  };
 
   const [activeTab, setActiveTab] = useState<"branding" | "team" | "usage" | "security">("branding");
   
@@ -59,6 +65,12 @@ export default function SettingsPage() {
   const [sessions, setSessions] = useState<UserSession[]>([]);
   const [loadingSessions, setLoadingSessions] = useState(false);
 
+  // Inline confirmation state (replaces native confirm() dialogs)
+  const [confirmRevokeId, setConfirmRevokeId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+  const [revokingId, setRevokingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
   // Load team members
@@ -66,12 +78,26 @@ export default function SettingsPage() {
     if (!token || !user?.tenant_id) return;
     setLoadingMembers(true);
     try {
-      const res = await fetch(`${API_URL}/api/v1/tenants/members`, {
+      let activeToken = token;
+      let res = await fetch(`${API_URL}/api/v1/tenants/members`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${activeToken}`,
           "X-Tenant-ID": user.tenant_id,
         },
       });
+      // Token may have expired (15 min lifetime) — refresh and retry once
+      if (res.status === 401) {
+        const newToken = await refreshSession();
+        if (newToken) {
+          activeToken = newToken;
+          res = await fetch(`${API_URL}/api/v1/tenants/members`, {
+            headers: {
+              Authorization: `Bearer ${activeToken}`,
+              "X-Tenant-ID": user.tenant_id,
+            },
+          });
+        }
+      }
       if (res.ok) {
         const data = await res.json();
         setMembers(data);
@@ -88,11 +114,20 @@ export default function SettingsPage() {
     if (!token) return;
     setLoadingSessions(true);
     try {
-      const res = await fetch(`${API_URL}/api/v1/auth/sessions`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      let activeToken = token;
+      let res = await fetch(`${API_URL}/api/v1/auth/sessions`, {
+        headers: { Authorization: `Bearer ${activeToken}` },
       });
+      // Token may have expired (15 min lifetime) — refresh and retry once
+      if (res.status === 401) {
+        const newToken = await refreshSession();
+        if (newToken) {
+          activeToken = newToken;
+          res = await fetch(`${API_URL}/api/v1/auth/sessions`, {
+            headers: { Authorization: `Bearer ${activeToken}` },
+          });
+        }
+      }
       if (res.ok) {
         const data = await res.json();
         setSessions(data);
@@ -169,50 +204,81 @@ export default function SettingsPage() {
     }
   };
 
-  // Handle delete member
+  // Handle delete member (called after inline confirm)
   const handleDeleteMember = async (memberId: number) => {
-    if (!confirm("Are you sure you want to remove this team member?")) return;
+    setDeletingId(memberId);
+    setConfirmDeleteId(null);
     try {
-      const res = await fetch(`${API_URL}/api/v1/tenants/members/${memberId}`, {
+      let activeToken = token;
+      let res = await fetch(`${API_URL}/api/v1/tenants/members/${memberId}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${activeToken}`,
           "X-Tenant-ID": user?.tenant_id || "propintel",
         },
       });
+      // Refresh token if expired and retry
+      if (res.status === 401) {
+        const newToken = await refreshSession();
+        if (newToken) {
+          activeToken = newToken;
+          res = await fetch(`${API_URL}/api/v1/tenants/members/${memberId}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${activeToken}`,
+              "X-Tenant-ID": user?.tenant_id || "propintel",
+            },
+          });
+        }
+      }
       if (res.ok) {
-        setMembers(members.filter((m) => m.id !== memberId));
+        setMembers((prev) => prev.filter((m) => m.id !== memberId));
       } else {
         const data = await res.json();
-        alert(data.detail || "Could not remove member.");
+        console.error("Delete member failed:", data.detail);
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setDeletingId(null);
     }
   };
 
-  // Handle revoke session
+  // Handle revoke session (called after inline confirm)
   const handleRevokeSession = async (sessionId: string) => {
-    if (!confirm("Are you sure you want to terminate this session? The device using this session will be logged out immediately.")) return;
+    setRevokingId(sessionId);
+    setConfirmRevokeId(null);
     try {
-      const res = await fetch(`${API_URL}/api/v1/auth/sessions/${sessionId}/revoke`, {
+      let activeToken = token;
+      let res = await fetch(`${API_URL}/api/v1/auth/sessions/${sessionId}/revoke`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${activeToken}` },
       });
+      // Refresh token if expired and retry
+      if (res.status === 401) {
+        const newToken = await refreshSession();
+        if (newToken) {
+          activeToken = newToken;
+          res = await fetch(`${API_URL}/api/v1/auth/sessions/${sessionId}/revoke`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${activeToken}` },
+          });
+        }
+      }
       if (res.ok) {
-        setSessions(sessions.filter((s) => s.session_id !== sessionId));
+        setSessions((prev) => prev.filter((s) => s.session_id !== sessionId));
       } else {
         const data = await res.json();
-        alert(data.detail || "Could not revoke session.");
+        console.error("Revoke failed:", data.detail);
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setRevokingId(null);
     }
   };
 
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.role === "admin" || user?.role === "agency_manager";
 
   const getChannelIcon = (channel: string) => {
     switch (channel.toLowerCase()) {
@@ -417,13 +483,35 @@ export default function SettingsPage() {
                     </div>
 
                     {isAdmin && member.email !== user?.email ? (
-                      <button
-                        onClick={() => handleDeleteMember(member.id)}
-                        className="p-2 text-muted-foreground hover:text-rose-500 rounded-lg hover:bg-rose-500/5 transition-colors cursor-pointer"
-                        title="Remove Seat"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      confirmDeleteId === member.id ? (
+                        // Inline confirmation — no native confirm() dialog
+                        <div className="flex items-center gap-1.5 animate-in fade-in duration-150">
+                          <span className="text-[10px] text-rose-400 font-bold flex items-center gap-1">
+                            <AlertTriangle className="w-3 h-3" /> Remove?
+                          </span>
+                          <button
+                            onClick={() => handleDeleteMember(member.id)}
+                            disabled={deletingId === member.id}
+                            className="px-2 py-1 text-[10px] font-bold bg-rose-500 hover:bg-rose-600 text-white rounded-md transition-colors cursor-pointer"
+                          >
+                            {deletingId === member.id ? <Loader2 className="w-3 h-3 animate-spin" /> : "Yes, Remove"}
+                          </button>
+                          <button
+                            onClick={() => setConfirmDeleteId(null)}
+                            className="px-2 py-1 text-[10px] font-bold border border-border text-muted-foreground hover:text-foreground rounded-md transition-colors cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setConfirmDeleteId(member.id)}
+                          className="p-2 text-muted-foreground hover:text-rose-500 rounded-lg hover:bg-rose-500/5 transition-colors cursor-pointer"
+                          title="Remove Seat"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )
                     ) : null}
                   </div>
                 ))}
@@ -559,14 +647,40 @@ export default function SettingsPage() {
                     </div>
 
                     {!s.is_current && (
-                      <button
-                        onClick={() => handleRevokeSession(s.session_id)}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-rose-400 hover:text-white bg-rose-500/5 hover:bg-rose-500 border border-rose-500/20 hover:border-transparent rounded-lg transition-all cursor-pointer"
-                        title="Force Terminate Session"
-                      >
-                        <Power className="w-3.5 h-3.5" />
-                        Revoke
-                      </button>
+                      confirmRevokeId === s.session_id ? (
+                        // Inline confirmation — no native confirm() dialog needed
+                        <div className="flex items-center gap-1.5 animate-in fade-in duration-150">
+                          <span className="text-[10px] text-rose-400 font-bold flex items-center gap-1">
+                            <AlertTriangle className="w-3 h-3" /> Terminate?
+                          </span>
+                          <button
+                            onClick={() => handleRevokeSession(s.session_id)}
+                            disabled={revokingId === s.session_id}
+                            className="px-2.5 py-1.5 text-[10px] font-bold bg-rose-500 hover:bg-rose-600 text-white rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+                          >
+                            {revokingId === s.session_id ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              <><Power className="w-3 h-3" /> Confirm</>  
+                            )}
+                          </button>
+                          <button
+                            onClick={() => setConfirmRevokeId(null)}
+                            className="px-2.5 py-1.5 text-[10px] font-bold border border-border text-muted-foreground hover:text-foreground rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+                          >
+                            <X className="w-3 h-3" /> Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setConfirmRevokeId(s.session_id)}
+                          className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-rose-400 hover:text-white bg-rose-500/5 hover:bg-rose-500 border border-rose-500/20 hover:border-transparent rounded-lg transition-all cursor-pointer"
+                          title="Force Terminate Session"
+                        >
+                          <Power className="w-3.5 h-3.5" />
+                          Revoke
+                        </button>
+                      )
                     )}
                   </div>
                 ))}

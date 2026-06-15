@@ -31,10 +31,45 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const applyTenantBranding = (hexColor: string) => {
+    if (typeof window !== "undefined" && hexColor) {
+      document.documentElement.style.setProperty("--primary", hexColor);
+      const r = parseInt(hexColor.slice(1, 3), 16);
+      const g = parseInt(hexColor.slice(3, 5), 16);
+      const b = parseInt(hexColor.slice(5, 7), 16);
+      if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+        document.documentElement.style.setProperty("--primary-rgb", `${r}, ${g}, ${b}`);
+      }
+    }
+  };
+
+  // Req[1]: Apply cached white-label branding from localStorage immediately on mount
+  // This runs once on startup before user/token are resolved to avoid a flash of un-branded UI
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem("propintel_tenant_branding");
+      if (cached) {
+        try {
+          const tenantData = JSON.parse(cached);
+          if (tenantData?.primary_color) {
+            // Apply branding immediately — don't wait for user to be resolved
+            setTenant(tenantData);
+            applyTenantBranding(tenantData.primary_color);
+          }
+        } catch (e) {
+          console.error("Failed to parse cached tenant branding:", e);
+        }
+      }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     async function loadTenantBranding() {
       if (!token || !user?.tenant_id) {
-        setTenant(null);
+        // If user is resolved but has no tenant_id, clear stale cached branding
+        if (user !== undefined && !user?.tenant_id) {
+          setTenant(null);
+        }
         setLoading(false);
         return;
       }
@@ -49,6 +84,7 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         if (res.ok) {
           const tenantData = await res.json();
           setTenant(tenantData);
+          localStorage.setItem("propintel_tenant_branding", JSON.stringify(tenantData));
           applyTenantBranding(tenantData.primary_color);
         }
       } catch (err) {
@@ -61,22 +97,6 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
     loadTenantBranding();
   }, [user, token]);
 
-  const applyTenantBranding = (hexColor: string) => {
-    if (typeof window !== "undefined" && hexColor) {
-      // Set primary color css variable dynamically
-      document.documentElement.style.setProperty("--primary", hexColor);
-      
-      // Compute subtle transparent versions for rings/hover states
-      // Assuming hex color form '#RRGGBB'
-      const r = parseInt(hexColor.slice(1, 3), 16);
-      const g = parseInt(hexColor.slice(3, 5), 16);
-      const b = parseInt(hexColor.slice(5, 7), 16);
-      
-      if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
-        document.documentElement.style.setProperty("--primary-rgb", `${r}, ${g}, ${b}`);
-      }
-    }
-  };
 
   const onboardTenant = async (
     id: string,
@@ -110,6 +130,7 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
       // If user is logged in and belongs to this new tenant, update UI branding
       if (user && user.tenant_id === id) {
         setTenant(data);
+        localStorage.setItem("propintel_tenant_branding", JSON.stringify(data));
         applyTenantBranding(data.primary_color);
       }
     } catch (err: any) {
@@ -147,6 +168,7 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
       }
 
       setTenant(data);
+      localStorage.setItem("propintel_tenant_branding", JSON.stringify(data));
       applyTenantBranding(data.primary_color);
     } catch (err: any) {
       setError(err.message || "Branding update error.");

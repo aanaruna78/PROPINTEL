@@ -7,8 +7,14 @@ import Link from "next/link";
 import { AiSystemStats } from "@/components/dashboard/AiSystemStats";
 import { LogOut, User as UserIcon, Loader2, Sparkles } from "lucide-react";
 
-const getNavItems = (role: string) => {
-  const common = [{ name: "Dashboard", href: "/" }];
+interface NavItem {
+  name: string;
+  href: string;
+  disabled?: boolean;
+}
+
+const getNavItems = (role: string): NavItem[] => {
+  const common: NavItem[] = [{ name: "Dashboard", href: "/" }];
   
   switch (role) {
     case "buyer":

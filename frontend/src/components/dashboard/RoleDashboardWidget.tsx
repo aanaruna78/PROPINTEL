@@ -206,7 +206,7 @@ export function RoleDashboardWidget() {
       </div>
 
       <div className="mt-4 pt-3 border-t border-border/30 flex items-center justify-between text-[11px]">
-        <span className="text-muted-foreground">Authorized Context: <strong className="text-foreground capitalize">{user.role}</strong></span>
+        <span className="text-muted-foreground">Authorized Context: <strong className="text-foreground capitalize">{user?.role}</strong></span>
         <button className="flex items-center gap-1 text-primary hover:text-primary/80 font-bold transition-colors">
           Initialize Suite
           <ArrowRight className="w-3.5 h-3.5" />

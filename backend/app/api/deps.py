@@ -17,7 +17,80 @@ oauth2_scheme = OAuth2PasswordBearer(
 )
 
 # In-memory mock database for fallback registration support during local development
-MOCK_USERS_DB = {}
+MOCK_USERS_DB = {
+    "buyer@propintel.ai": {
+        "email": "buyer@propintel.ai",
+        "password": "password123",
+        "full_name": "Aiden Buyer",
+        "role": "buyer",
+        "tenant_id": "propintel",
+        "mobile_number": "+65 9111 2222"
+    },
+    "seller@propintel.ai": {
+        "email": "seller@propintel.ai",
+        "password": "password123",
+        "full_name": "Sarah Seller",
+        "role": "seller",
+        "tenant_id": "propintel",
+        "mobile_number": "+65 9222 3333"
+    },
+    "tenant@propintel.ai": {
+        "email": "tenant@propintel.ai",
+        "password": "password123",
+        "full_name": "Toby Tenant",
+        "role": "tenant",
+        "tenant_id": "propintel",
+        "mobile_number": "+65 9333 4444"
+    },
+    "investor@propintel.ai": {
+        "email": "investor@propintel.ai",
+        "password": "password123",
+        "full_name": "Ian Investor",
+        "role": "investor",
+        "tenant_id": "propintel",
+        "mobile_number": "+65 9444 5555"
+    },
+    "landlord@propintel.ai": {
+        "email": "landlord@propintel.ai",
+        "password": "password123",
+        "full_name": "Lucas Landlord",
+        "role": "landlord",
+        "tenant_id": "propintel",
+        "mobile_number": "+65 9555 6666"
+    },
+    "manager@propintel.ai": {
+        "email": "manager@propintel.ai",
+        "password": "password123",
+        "full_name": "Marcus Manager",
+        "role": "agency_manager",
+        "tenant_id": "propintel",
+        "mobile_number": "+65 9666 7777"
+    },
+    "admin@propintel.ai": {
+        "email": "admin@propintel.ai",
+        "password": "password123",
+        "full_name": "Alice Admin",
+        "role": "admin",
+        "tenant_id": "propintel",
+        "mobile_number": "+65 9777 8888"
+    },
+    "user.buyer@gmail.com": {
+        "email": "user.buyer@gmail.com",
+        "password": "password123",
+        "full_name": "Gmail Buyer",
+        "role": "buyer",
+        "tenant_id": "propintel",
+        "mobile_number": "+65 8111 2222"
+    },
+    "user.seller@gmail.com": {
+        "email": "user.seller@gmail.com",
+        "password": "password123",
+        "full_name": "Gmail Seller",
+        "role": "seller",
+        "tenant_id": "propintel",
+        "mobile_number": "+65 8222 3333"
+    }
+}
 
 # Mock user for local development database-free testing fallback
 MOCK_USER_DICT = {

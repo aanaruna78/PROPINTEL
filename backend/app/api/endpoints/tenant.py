@@ -98,10 +98,10 @@ def update_branding(
     """
     Update tenant primary color and branding settings (Admin-only).
     """
-    if current_user.role != "admin":
+    if current_user.role not in ["admin", "agency_manager"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Permission denied. Only organization admins can edit branding."
+            detail="Permission denied. Only organization admins or agency managers can edit branding."
         )
         
     try:
@@ -165,10 +165,10 @@ def invite_member(
     """
     Invite/provision a new agent member to the organization tenant.
     """
-    if current_user.role != "admin":
+    if current_user.role not in ["admin", "agency_manager"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Permission denied. Only organization admins can invite team members."
+            detail="Permission denied. Only organization admins or agency managers can invite team members."
         )
         
     import datetime
@@ -217,10 +217,10 @@ def remove_member(
     """
     Remove an agent member from the organization tenant (Admin-only).
     """
-    if current_user.role != "admin":
+    if current_user.role not in ["admin", "agency_manager"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Permission denied. Only organization admins can remove members."
+            detail="Permission denied. Only organization admins or agency managers can remove members."
         )
         
     try:

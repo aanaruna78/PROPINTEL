@@ -16,20 +16,68 @@ export default function LoginPage() {
   const [otpCode, setOtpCode] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   
+  // Forgot password state
+  const [forgotMode, setForgotMode] = useState(false);
+  const [forgotStep, setForgotStep] = useState(1);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [resetCode, setResetCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setMessage(null);
+    setLocalError(null);
     clearError();
 
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
     try {
-      if (otpMode) {
+      if (forgotMode) {
+        if (forgotStep === 1) {
+          const res = await fetch(`${API_URL}/api/v1/auth/forgot-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: forgotEmail }),
+          });
+          if (res.ok) {
+            setForgotStep(2);
+            setMessage("Verification code sent! Use code '654321' to reset your password.");
+          } else {
+            const data = await res.json();
+            throw new Error(data.detail || "Failed to request reset code.");
+          }
+        } else {
+          const res = await fetch(`${API_URL}/api/v1/auth/reset-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: forgotEmail,
+              code: resetCode,
+              new_password: newPassword,
+            }),
+          });
+          if (res.ok) {
+            setForgotMode(false);
+            setForgotStep(1);
+            setEmail(forgotEmail);
+            setPassword("");
+            setForgotEmail("");
+            setResetCode("");
+            setNewPassword("");
+            setMessage("Password successfully reset! You can now sign in.");
+          } else {
+            const data = await res.json();
+            throw new Error(data.detail || "Failed to reset password.");
+          }
+        }
+      } else if (otpMode) {
         if (!otpSent) {
           // Send OTP request
-          const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
           const res = await fetch(`${API_URL}/api/v1/auth/send-otp`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -52,6 +100,7 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       console.error(err);
+      setLocalError(err.message || "An unexpected error occurred");
     } finally {
       setSubmitting(false);
     }
@@ -63,6 +112,7 @@ export default function LoginPage() {
     setOtpTarget("");
     setOtpCode("");
     setMessage(null);
+    setLocalError(null);
     clearError();
   };
 
@@ -85,9 +135,9 @@ export default function LoginPage() {
 
         {/* Card */}
         <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-8 backdrop-blur-xl shadow-2xl">
-          {error && (
+          {(error || localError) && (
             <div className="mb-6 bg-red-500/10 border border-red-500/20 text-red-400 text-xs py-3 px-4 rounded-lg font-medium">
-              {error}
+              {error || localError}
             </div>
           )}
 
@@ -98,7 +148,58 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {!otpMode ? (
+            {forgotMode ? (
+              // Forgot Password Mode
+              forgotStep === 1 ? (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Email Address</label>
+                  <div className="relative">
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                    <Input
+                      type="email"
+                      required
+                      placeholder="name@company.com"
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                      className="pl-11 bg-zinc-950/80 border-zinc-800 text-white placeholder:text-zinc-600 focus-visible:ring-primary h-11"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Verification Code</label>
+                    <div className="relative">
+                      <ShieldCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                      <Input
+                        type="text"
+                        required
+                        maxLength={6}
+                        placeholder="654321"
+                        value={resetCode}
+                        onChange={(e) => setResetCode(e.target.value)}
+                        className="pl-11 bg-zinc-950/80 border-zinc-800 text-white tracking-[0.2em] font-mono text-center text-lg placeholder:tracking-normal placeholder:text-center placeholder:text-zinc-600 focus-visible:ring-primary h-11"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">New Password</label>
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                      <Input
+                        type="password"
+                        required
+                        placeholder="••••••••"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="pl-11 bg-zinc-950/80 border-zinc-800 text-white placeholder:text-zinc-600 focus-visible:ring-primary h-11"
+                      />
+                    </div>
+                  </div>
+                </>
+              )
+            ) : !otpMode ? (
               // Email & Password Mode
               <>
                 <div className="space-y-1.5">
@@ -119,7 +220,19 @@ export default function LoginPage() {
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-center">
                     <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Password</label>
-                    <span className="text-xs text-primary/80 hover:text-primary cursor-pointer font-medium">Forgot password?</span>
+                    <span
+                      onClick={() => {
+                        setForgotMode(true);
+                        setForgotStep(1);
+                        setForgotEmail(email);
+                        setMessage(null);
+                        setLocalError(null);
+                        clearError();
+                      }}
+                      className="text-xs text-primary/80 hover:text-primary cursor-pointer font-medium"
+                    >
+                      Forgot password?
+                    </span>
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
@@ -181,7 +294,10 @@ export default function LoginPage() {
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <>
-                  {otpMode ? (otpSent ? "Verify & Sign In" : "Request OTP Code") : "Sign In with Password"}
+                  {forgotMode
+                    ? (forgotStep === 1 ? "Send Reset Code" : "Reset Password")
+                    : (otpMode ? (otpSent ? "Verify & Sign In" : "Request OTP Code") : "Sign In with Password")
+                  }
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -190,12 +306,29 @@ export default function LoginPage() {
 
           {/* Toggle OTP/Password */}
           <div className="mt-5 text-center">
-            <button
-              onClick={toggleOtpMode}
-              className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors"
-            >
-              {otpMode ? "Sign In with password instead" : "Sign In with secure OTP instead"}
-            </button>
+            {forgotMode ? (
+              <button
+                onClick={() => {
+                  setForgotMode(false);
+                  setForgotStep(1);
+                  setMessage(null);
+                  setLocalError(null);
+                  clearError();
+                }}
+                className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors"
+                type="button"
+              >
+                Back to Sign In
+              </button>
+            ) : (
+              <button
+                onClick={toggleOtpMode}
+                className="text-xs font-semibold text-zinc-400 hover:text-white transition-colors"
+                type="button"
+              >
+                {otpMode ? "Sign In with password instead" : "Sign In with secure OTP instead"}
+              </button>
+            )}
           </div>
 
           {/* Social Logins */}

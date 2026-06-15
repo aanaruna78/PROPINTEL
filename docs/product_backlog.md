@@ -10,10 +10,10 @@ This document defines the complete high-level product backlog for PROPINTEL AI. 
 
 ## 2. Product Epic Structure
 
-| Epic ID | Epic Name | Status |
-|---------|-----------|--------|
+| Epic ID | Epic Name |
+|---------|-----------|
 | **EPIC-01** | User Experience & Omni Dashboard |
-| **EPIC-02** | Authentication, RBAC & SaaS Foundation | ![Status](https://img.shields.io/badge/Complete-green)
+| **EPIC-02** | Authentication, RBAC & SaaS Foundation |
 | **EPIC-03** | Property Data & Listings |
 | **EPIC-04** | AI Conversational Property Advisor |
 | **EPIC-05** | Market Intelligence & Analytics |

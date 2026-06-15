@@ -1,8 +1,17 @@
 from sqlalchemy import Column, Integer, String, Float
-from geoalchemy2 import Geometry
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
+
+# geoalchemy2 is an optional dependency for PostGIS support.
+# When not installed, the Geometry column is replaced with a plain String column
+# so the app can still start in offline/mock mode without PostGIS.
+try:
+    from geoalchemy2 import Geometry
+    _use_geometry = True
+except ImportError:
+    print("WARNING: geoalchemy2 not installed — location column will use String fallback (offline/mock mode).")
+    _use_geometry = False
 
 class PropertyProject(Base):
     __tablename__ = "property_projects"
@@ -20,7 +29,12 @@ class PropertyProject(Base):
     block_number = Column(String(50), nullable=True) # Used for HDB blocks
     
     # PostGIS Point (Longitude, Latitude) with standard SRID 4326
-    location = Column(Geometry(geometry_type='POINT', srid=4326), nullable=False)
+    # Falls back to a String column if geoalchemy2 is not installed
+    location = (
+        Column(Geometry(geometry_type='POINT', srid=4326), nullable=True)
+        if _use_geometry
+        else Column(String(100), nullable=True)
+    )
     
     # Derived Intelligence (To be updated by worker processes)
     fair_value_psf = Column(Float, nullable=True)
