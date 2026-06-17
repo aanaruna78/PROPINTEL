@@ -3,7 +3,8 @@ import json
 import datetime
 from typing import List, Dict, Any
 
-AUDIT_LOG_DIR = "/home/annamalai/GitHub/PROPINTEL/backend/logs"
+BACKEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+AUDIT_LOG_DIR = os.getenv("AUDIT_LOG_DIR", os.path.join(BACKEND_DIR, "logs"))
 AUDIT_LOG_FILE = os.path.join(AUDIT_LOG_DIR, "audit_events.log")
 
 # In-memory history for quick compliance inspection / testing
