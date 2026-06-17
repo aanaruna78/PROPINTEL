@@ -14,12 +14,16 @@ interface NavItem {
 }
 
 const getNavItems = (role: string): NavItem[] => {
-  const common: NavItem[] = [{ name: "Dashboard", href: "/" }];
+  const common: NavItem[] = [
+    { name: "Dashboard", href: "/" },
+    { name: "HDB Intelligence", href: "/hdb" }
+  ];
   
   switch (role) {
     case "buyer":
       return [
         ...common,
+        { name: "Demand Analytics", href: "/districts" },
         { name: "Intelligence Compare", href: "/compare" },
         { name: "Best Buy AI", href: "#", disabled: true },
         { name: "War Room", href: "#", disabled: true }
@@ -28,12 +32,13 @@ const getNavItems = (role: string): NavItem[] => {
       return [
         ...common,
         { name: "Sell Timing", href: "#", disabled: true },
-        { name: "Demand Analytics", href: "#", disabled: true }
+        { name: "Demand Analytics", href: "/districts" }
       ];
     case "investor":
       return [
         ...common,
         { name: "Intelligence Compare", href: "/compare" },
+        { name: "Demand Analytics", href: "/districts" },
         { name: "Portfolio Monitoring", href: "#", disabled: true },
         { name: "High-Yield Signals", href: "#", disabled: true }
       ];
@@ -46,12 +51,14 @@ const getNavItems = (role: string): NavItem[] => {
     case "landlord":
       return [
         ...common,
+        { name: "Demand Analytics", href: "/districts" },
         { name: "Yield Optimize", href: "#", disabled: true },
         { name: "Tenant Fit", href: "#", disabled: true }
       ];
     case "agency_manager":
       return [
         ...common,
+        { name: "Demand Analytics", href: "/districts" },
         { name: "Org Settings", href: "/settings" },
         { name: "Team Roster", href: "#", disabled: true }
       ];
@@ -59,6 +66,7 @@ const getNavItems = (role: string): NavItem[] => {
       return [
         ...common,
         { name: "Intelligence Compare", href: "/compare" },
+        { name: "Demand Analytics", href: "/districts" },
         { name: "Org Settings", href: "/settings" },
         { name: "Admin Console", href: "#", disabled: true }
       ];
@@ -115,24 +123,24 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen flex w-full">
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-border bg-card/60 backdrop-blur-2xl hidden md:flex flex-col relative z-20">
-        <div className="h-24 flex items-center justify-center border-b border-border/50 p-4">
-          <Link href="/" className="flex items-center justify-center w-full">
-            <img src="/logo-light.png" alt="PROPINTEL Logo" className="h-auto w-36 object-contain mix-blend-multiply" />
+      {/* Sidebar — fixed to viewport height, no internal scroll */}
+      <aside className="w-64 border-r border-border bg-card/60 backdrop-blur-2xl hidden md:flex flex-col relative z-20 h-screen overflow-hidden sticky top-0 shrink-0">
+        <div className="h-20 flex items-center justify-center border-b border-border/50 px-4 shrink-0">
+          <Link href="/" className="flex items-center justify-center w-full h-full">
+            <img src="/logo-light.png" alt="PROPINTEL Logo" className="max-h-14 w-auto object-contain mix-blend-multiply" />
           </Link>
         </div>
-        <nav className="flex-1 flex flex-col gap-2 p-4 justify-between">
-          <div className="flex flex-col gap-2">
+        <nav className="flex-1 flex flex-col p-3 justify-between min-h-0">
+          <div className="flex flex-col gap-0.5">
             {getNavItems(user.role).map((item, idx) => {
               if (item.disabled) {
                 return (
                   <div
                     key={idx}
-                    className="px-3 py-2.5 rounded-lg text-muted-foreground/60 text-xs font-semibold border border-transparent flex items-center justify-between cursor-not-allowed hover:bg-muted/30 transition-colors"
+                    className="px-3 py-2 rounded-lg text-muted-foreground/60 text-xs font-semibold border border-transparent flex items-center justify-between cursor-not-allowed hover:bg-muted/30 transition-colors"
                   >
                     <span>{item.name}</span>
-                    <span className="text-[8px] bg-primary/10 text-primary border border-primary/20 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider scale-90">Premium</span>
+                    <span className="text-[8px] bg-primary/10 text-primary border border-primary/20 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">Premium</span>
                   </div>
                 );
               }
@@ -140,7 +148,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <Link
                   key={idx}
                   href={item.href}
-                  className={`px-3 py-2.5 rounded-lg text-sm font-medium border transition-all ${
+                  className={`px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
                     pathname === item.href
                       ? "bg-primary/10 text-primary border-primary/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] font-semibold"
                       : "hover:bg-muted text-muted-foreground border-transparent"
@@ -182,9 +190,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
         {/* Desktop / Mobile Header */}
         <header className="h-16 border-b border-border flex items-center justify-between px-6 bg-background/80 backdrop-blur-xl sticky top-0 z-30">
-          <div className="md:hidden flex items-center">
-            <Link href="/" className="flex items-center">
-              <img src="/logo-light.png" alt="PROPINTEL Logo" className="h-auto w-28 object-contain mix-blend-multiply" />
+          <div className="md:hidden flex items-center h-full">
+            <Link href="/" className="flex items-center h-full">
+              <img src="/logo-light.png" alt="PROPINTEL Logo" className="max-h-10 w-auto object-contain mix-blend-multiply" />
             </Link>
           </div>
           <div className="flex-1 flex justify-center md:justify-start">
