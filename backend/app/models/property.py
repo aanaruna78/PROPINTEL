@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
@@ -39,3 +39,43 @@ class PropertyProject(Base):
     # Derived Intelligence (To be updated by worker processes)
     fair_value_psf = Column(Float, nullable=True)
     rental_yield_estimate = Column(Float, nullable=True)
+
+    # Relationship to transactions
+    transactions = relationship("PropertyTransaction", back_populates="project", cascade="all, delete-orphan")
+
+class PropertyTransaction(Base):
+    __tablename__ = "property_transactions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(Integer, ForeignKey("property_projects.id", ondelete="CASCADE"), nullable=False, index=True)
+    
+    contract_date = Column(String(10), nullable=False, index=True) # format: "MMYY" (e.g. "1225")
+    price = Column(Float, nullable=False)
+    area_sqm = Column(Float, nullable=False)
+    area_sqft = Column(Float, nullable=False)
+    psf = Column(Float, nullable=False, index=True)
+    
+    property_type = Column(String(100), nullable=False)
+    tenure = Column(String(100), nullable=False)
+    floor_range = Column(String(50), nullable=False)
+    type_of_sale = Column(String(50), nullable=False) # 'New Sale', 'Resale', 'Sub Sale'
+    no_of_units = Column(Integer, default=1)
+    type_of_area = Column(String(50), nullable=False) # 'Strata', 'Land'
+    nett_price = Column(Float, nullable=True)
+
+    # Relationship to project
+    project = relationship("PropertyProject", back_populates="transactions")
+
+class DistrictMonthlyStats(Base):
+    __tablename__ = "district_monthly_stats"
+
+    id = Column(Integer, primary_key=True, index=True)
+    district = Column(String(10), index=True, nullable=False)
+    month = Column(String(7), index=True, nullable=False)  # format: "YYYY-MM"
+    avg_price_psf = Column(Float, nullable=False)
+    price_movement_percent = Column(Float, nullable=False)
+    rental_pressure = Column(Float, nullable=False)
+    buyer_activity = Column(Float, nullable=False)
+    demand_index = Column(Float, nullable=False)
+    transaction_count = Column(Integer, nullable=False)
+

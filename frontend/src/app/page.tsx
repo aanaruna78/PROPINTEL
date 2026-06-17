@@ -5,6 +5,7 @@ import { DistrictHeatmapWidget } from "@/components/dashboard/DistrictHeatmapWid
 import { PropertyFeed } from "@/components/dashboard/PropertyFeed";
 import { WatchlistWidget } from "@/components/dashboard/WatchlistWidget";
 import { RoleDashboardWidget } from "@/components/dashboard/RoleDashboardWidget";
+import { DistrictAnalyticsEngineWidget } from "@/components/dashboard/DistrictAnalyticsEngineWidget";
 
 export default function DashboardPage() {
   return (
@@ -31,8 +32,8 @@ export default function DashboardPage() {
 
       {/* Top Intelligence Dashboard (Widgets + Map) */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        {/* Left Side: 3 Small Widgets */}
-        <div className="xl:col-span-7 grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Left Side: 4 Small Widgets (3 + District Engine) */}
+        <div className="xl:col-span-7 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           <div className="h-[320px]">
             <MarketPulseWidget />
           </div>
@@ -41,6 +42,9 @@ export default function DashboardPage() {
           </div>
           <div className="h-[320px]">
             <InsightsWidget />
+          </div>
+          <div className="h-[320px]">
+            <DistrictAnalyticsEngineWidget />
           </div>
         </div>
         
