@@ -4,7 +4,7 @@ from app.core.database import engine
 from app.models.property import Base
 from app.models.user import User # Ensure SQLAlchemy registers the user table
 from app.models.tenant import Tenant # Ensure SQLAlchemy registers the tenant table
-from app.api.endpoints import properties, auth, tenant, rbac
+from app.api.endpoints import properties, auth, tenant, rbac, ura, hdb, analytics
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -13,8 +13,21 @@ async def lifespan(app: FastAPI):
     # Initialize database tables (for dev purposes; normally use Alembic)
     try:
         Base.metadata.create_all(bind=engine)
+        # Seed/recalculate district analytics on startup
+        from app.core.database import SessionLocal
+        from app.services.district_service import recalculate_district_analytics
+        db = SessionLocal()
+        if db is not None:
+            try:
+                print("Triggering District Analytics aggregation and seeding...")
+                recalculate_district_analytics(db)
+                print("District Analytics calculation complete.")
+            except Exception as se:
+                print(f"Error seeding district analytics: {se}")
+            finally:
+                db.close()
     except Exception as e:
-        print(f"Skipping database table creation (no database connection or PostGIS support): {e}")
+        print(f"Skipping database table creation or analytics seeding (offline/mock mode): {e}")
     yield
     # Shutdown: Close connections
     print("Shutting down PROPINTEL AI Backend...")
@@ -57,3 +70,6 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(tenant.router, prefix="/api/v1/tenants", tags=["Tenancy"])
 app.include_router(properties.router, prefix="/api/v1/properties", tags=["Properties"])
 app.include_router(rbac.router, prefix="/api/v1/rbac", tags=["RBAC"])
+app.include_router(ura.router, prefix="/api/v1/ura", tags=["URA Data Pipeline"])
+app.include_router(hdb.router, prefix="/api/v1/hdb", tags=["HDB Market Intelligence"])
+app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["District Analytics"])

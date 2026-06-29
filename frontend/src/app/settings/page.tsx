@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTenant } from "@/context/TenantContext";
-import { Sparkles, Loader2, Users, Palette, Trash2, UserPlus, CreditCard, ShieldCheck, Check, Laptop, Smartphone, MessageSquare, Power, Clock, X, AlertTriangle } from "lucide-react";
+import { Sparkles, Loader2, Users, Palette, Trash2, UserPlus, CreditCard, ShieldCheck, Check, Laptop, Smartphone, MessageSquare, Power, Clock, X, AlertTriangle, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { UraPipelineWidget } from "@/components/dashboard/UraPipelineWidget";
 
 const PRESET_COLORS = [
   { name: "Indigo", hex: "#4338ca" },
@@ -43,7 +44,7 @@ export default function SettingsPage() {
     return token;
   };
 
-  const [activeTab, setActiveTab] = useState<"branding" | "team" | "usage" | "security">("branding");
+  const [activeTab, setActiveTab] = useState<"branding" | "team" | "usage" | "security" | "integration">("branding");
   
   // Branding state
   const [logoUrl, setLogoUrl] = useState(tenant?.logo_url || "");
@@ -339,6 +340,17 @@ export default function SettingsPage() {
           <CreditCard className="w-4 h-4" />
           Plan & Subscription
         </button>
+        {isAdmin && (
+          <button
+            onClick={() => setActiveTab("integration")}
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold border-b-2 transition-all ${
+              activeTab === "integration" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Database className="w-4 h-4" />
+            System Integration
+          </button>
+        )}
       </div>
 
       {/* Branding Settings Tab */}
@@ -771,6 +783,11 @@ export default function SettingsPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* System Integration Tab */}
+      {activeTab === "integration" && isAdmin && (
+        <UraPipelineWidget />
       )}
     </div>
   );

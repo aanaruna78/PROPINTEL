@@ -13,10 +13,12 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days for local development conven
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    # Match the 72-byte truncation applied during hashing
+    return pwd_context.verify(plain_password[:72], hashed_password)
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    # bcrypt has a hard 72-byte limit; truncate to stay within it
+    return pwd_context.hash(password[:72])
 
 # In-memory blocklist of revoked tokens
 REVOKED_TOKENS = set()
