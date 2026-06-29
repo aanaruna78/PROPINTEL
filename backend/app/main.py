@@ -4,7 +4,7 @@ from app.core.database import engine
 from app.models.property import Base
 from app.models.user import User # Ensure SQLAlchemy registers the user table
 from app.models.tenant import Tenant # Ensure SQLAlchemy registers the tenant table
-from app.api.endpoints import properties, auth, tenant, rbac, ura, hdb, analytics
+from app.api.endpoints import properties, auth, tenant, rbac, ura, hdb, analytics, chat
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -73,3 +73,4 @@ app.include_router(rbac.router, prefix="/api/v1/rbac", tags=["RBAC"])
 app.include_router(ura.router, prefix="/api/v1/ura", tags=["URA Data Pipeline"])
 app.include_router(hdb.router, prefix="/api/v1/hdb", tags=["HDB Market Intelligence"])
 app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["District Analytics"])
+app.include_router(chat.router, prefix="/api/v1/chat", tags=["AI Advisor Chat"])

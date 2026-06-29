@@ -15,8 +15,8 @@ This document defines the complete high-level product backlog for PROPINTEL AI. 
 | **EPIC-01** | User Experience & Omni Dashboard | ![Status](https://img.shields.io/badge/Complete-green) |
 | **EPIC-02** | Authentication, RBAC & SaaS Foundation | ![Status](https://img.shields.io/badge/Complete-green) |
 | **EPIC-03** | Property Data & Listings | ![Status](https://img.shields.io/badge/Complete-green) |
-| **EPIC-04** | AI Conversational Property Advisor |
-| **EPIC-05** | Market Intelligence & Analytics | ![Status](https://img.shields.io/badge/Unverified-yellow) |
+| **EPIC-04** | AI Conversational Property Advisor | ![Status](https://img.shields.io/badge/Incomplete-red) |
+| **EPIC-05** | Market Intelligence & Analytics | ![Status](https://img.shields.io/badge/Complete-green) |
 | **EPIC-06** | AI Best Buy Prediction Engine |
 | **EPIC-07** | AI Best Sell Prediction Engine |
 | **EPIC-08** | Buyer-Seller Matchmaking |
