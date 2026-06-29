@@ -8,6 +8,7 @@ PROPINTEL AI is a next-generation SaaS platform designed to shift the Singapore 
 
 - **AI-Powered Best Buy & Sell Engines:** Spot undervalued listings, forecast capital gains, and identify optimal exit windows based on millions of data points.
 - **Market Pulse Dashboard *(STORY-05-004)*:** Live district movement indicators, role-filtered opportunity alerts (price dips, hot streaks, rental surges), and AI-generated district summaries powered by OpenAI `gpt-4o-mini`.
+- **AI Conversational Property Advisor *(STORY-04-001)*:** A multi-turn real estate analyst chat interface that interprets property searches (private projects, HDB Towns) and market pulse requests, maintains conversational context for refinements, and renders rich inline widgets.
 - **Autonomous Matchmaking:** Directly connect verified buyers/sellers and tenants/landlords based on lifestyle alignment, budget, and financial compatibility.
 - **AI Negotiation War Room:** Predict seller urgency and buyer pressure to suggest effective offer strategies, counter-offers, and walkaway prices.
 - **Document Intelligence:** Automate the comprehension of complex workflows (OTPs, Tenancy Agreements, Stamp Duty calculations) to highlight risks and missing fields.
@@ -56,8 +57,8 @@ The FastAPI documentation will be available at [http://localhost:8000/docs](http
 ### 4. Environment Variables (Optional)
 Create a `.env` file in `backend/` to enable production AI features:
 ```env
-# Enables OpenAI gpt-4o-mini for live district AI summaries.
-# Without this key, the system uses high-quality deterministic template summaries.
+# Enables OpenAI gpt-4o-mini for live district AI summaries and conversational agent actions.
+# Without this key, the system uses high-quality deterministic template and parsing summaries.
 OPENAI_API_KEY=sk-...
 ```
 > See `docs/DEV_CREDENTIALS.md` for the full list of mock test accounts and local dev setup.

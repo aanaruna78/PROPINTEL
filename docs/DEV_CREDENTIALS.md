@@ -11,13 +11,16 @@
 Create a `backend/.env` file to enable production AI features locally:
 
 ```env
-# AI District Summaries (STORY-05-004)
-# Without this key: high-quality deterministic template summaries are used.
-# With this key: live OpenAI gpt-4o-mini summaries are generated per district.
+# AI Summaries (STORY-05-004) & Chat Advisor (STORY-04-001)
+# Without this key: high-quality deterministic template summaries and local pattern-matching chatbot fallbacks are used.
+# With this key: live OpenAI gpt-4o-mini summaries and agent tool-calling are enabled.
 OPENAI_API_KEY=sk-...
 ```
 
-> **In dev (no key set):** The `GET /api/v1/analytics/districts/{district}/ai-summary` endpoint returns templated summaries automatically. The response includes `"powered_by": "template"`. No mocking or stubbing is required — the fallback is built-in.
+> **In dev (no key set):**
+> - The `GET /api/v1/analytics/districts/{district}/ai-summary` endpoint returns templated summaries automatically. The response includes `"powered_by": "template"`.
+> - The `POST /api/v1/chat/message` endpoint operates in local pattern-matching mode, resolving property lists, HDB Town intelligence, and market index results along with multi-turn refinement queries using internal services.
+
 
 ---
 

@@ -16,7 +16,8 @@ interface NavItem {
 const getNavItems = (role: string): NavItem[] => {
   const common: NavItem[] = [
     { name: "Dashboard", href: "/" },
-    { name: "HDB Intelligence", href: "/hdb" }
+    { name: "HDB Intelligence", href: "/hdb" },
+    { name: "AI Chat Assistant", href: "/chat" }
   ];
   
   switch (role) {
